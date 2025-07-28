@@ -1,22 +1,29 @@
+#include <NetworkClientSecure.h>
 #include <WiFi.h>
+#include "LCDIC2.h"
 
-#include "temperature.h"
+// #include "temperature.h"
+#include "mq2.h"
+
+LCDIC2 lcd(0x27, 20, 4);
+
+#define BUTTON_PIN 5
+#define LED_PIN 2
+
+const String latitude = "10.33028";
+const String longitude = "123.87722";
 
 // WiFi library can't be separated
-const char *ssid = "your-ssid";          // Change this to your WiFi SSID
-const char *password = "your-password";  // Change this to your WiFi password
+// const char *ssid = "Tabi";          // Change this to your WiFi SSID
+// const char *password = "avreg$^DF456^";  // Change this to your WiFi password
+const char *ssid = "TinRam";          // Change this to your WiFi SSID
+const char *password = "tinram053787";  // Change this to your WiFi password
 
-const char *host = "api.thingspeak.com";        // Change to backend api
-const int httpPort = 80;                        // Change to backend port
-const String channelID = "2005329";             // Unneeded
+const char *host = "di-ta-web-app.vercel.app";        // Change to backend api
+const int httpPort = 443;                        // Change to backend port
 const String apiKey = "V6YOTILH9I7D51F9";  // Change this to backend API key
 
-// The default example accepts one data filed named "field1"
-// For your own server you can ofcourse create more of them.
-int field1 = 0;
-
-int numberOfResults = 3;  // Number of results to be read
-int fieldNumber = 1;      // Field number which will be read out
+bool hasFire = false;
 
 void initWifi() {
   Serial.println();
@@ -56,43 +63,82 @@ void readResponse(NetworkClient *client) {
   Serial.printf("\nClosing connection\n\n");
 }
 
-void sampleWifiFunction() {
-  NetworkClient client;
-  String footer = String(" HTTP/1.1\r\n") + "Host: " + String(host) + "\r\n" + "Connection: close\r\n\r\n";
-
-  // WRITE --------------------------------------------------------------------------------------------
-  if (!client.connect(host, httpPort)) {
-    return;
-  }
-
-  client.print("GET /update?api_key=" + apiKey + "&field1=" + field1 + footer);
-  readResponse(&client);
-
-  // READ --------------------------------------------------------------------------------------------
-
-  String readRequest = "GET /channels/" + channelID + "/fields/" + fieldNumber + ".json?results=" + numberOfResults + " HTTP/1.1\r\n" + "Host: " + host + "\r\n"
+void pingClient() {
+  NetworkClientSecure client;
+  client.setInsecure();
+  
+  String readRequest = String("GET /api/ping HTTP/1.1\r\nHost: ") + host + "\r\n"
                        + "Connection: close\r\n\r\n";
 
   if (!client.connect(host, httpPort)) {
+    Serial.printf("\nCan't connect to client\n\n");
     return;
   }
 
   client.print(readRequest);
   readResponse(&client);
+}
 
-  ++field1;
+
+void sendData(bool isOnFire, int smokeValue) {
+  NetworkClientSecure client;
+  client.setInsecure();
+  
+  String readRequest = String("POST /api/fire HTTP/1.1\r\nHost: ") + host + "\r\nContent-Type: application/json\r\n\r\n"
+                      + "{\r\n    \"latitude\": \"" + latitude + "\",\r\n"
+                      + "    \"longitude\": \"" + longitude + "\",\r\n"
+                      + "    \"isOnFire\": \"" + isOnFire + "\",\r\n"
+                      + "    \"smokeValue\": " + smokeValue + "\r\n"
+                      + "Connection: close\r\n\r\n";
+
+  if (!client.connect(host, httpPort)) {
+    Serial.printf("\nCan't connect to client\n\n");
+    return;
+  }
+
+  client.print(readRequest);
+  readResponse(&client);
 }
 
 // -------------------------------------------------------------------------------------------------
 
 void setup() {
   Serial.begin(115200);
+
+  lcd.begin();
+  lcd.print("Setting up..");
+
+  pinMode(LED_PIN, OUTPUT);
+
   initWifi();
-  initTemperatureSensor();
+  // initTemperatureSensor();
+  initSmokeSensor();
 }
 
 void loop() {
-    float temp = readTemperature();
-    sampleWifiFunction();
+    lcd.clear();
+    // float temp = readTemperature();
+    int smoke = readSmokeSensor();
+    int cleanAve = getAverage();
+
+    lcd.setCursor(0, 0);
+    lcd.print("Longitude:" + longitude);
+    lcd.setCursor(0, 1);
+    lcd.print("Latitude:" + latitude);
+    lcd.setCursor(0, 2);
+    lcd.print("Smoke:" + String(smoke));
+
+    lcd.setCursor(0, 3);
+    if (cleanAve < smoke) {
+      sendData(true, smoke);
+      digitalWrite(LED_PIN, HIGH);
+      lcd.print("On Fire!!!");
+    } else {
+      digitalWrite(LED_PIN, LOW);
+      lcd.print("All Clear");
+    }
+
+    pingClient();
+
     delay(1000);
 }

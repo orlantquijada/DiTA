@@ -2,10 +2,10 @@
 #include <DHT.h>
 #include <DHT_U.h>
 
-#define DHTPIN 2     // Digital pin connected to the DHT sensor
+#define DHTPIN 13     // Digital pin connected to the DHT sensor
 // Uncomment the type of sensor in use:
-//#define DHTTYPE    DHT11     // DHT 11
-#define DHTTYPE    DHT22     // DHT 22 (AM2302)
+#define DHTTYPE    DHT11     // DHT 11
+// #define DHTTYPE    DHT22     // DHT 22 (AM2302)
 //#define DHTTYPE    DHT21     // DHT 21 (AM2301)
 
 DHT_Unified dht(DHTPIN, DHTTYPE);

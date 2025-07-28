@@ -1,28 +1,41 @@
-/** biome-ignore-all lint/suspicious/noConsole: sample */
-'use client';
+"use client";
 
-import { sampleSchema, tryCatch } from 'dita-utils';
+import MapWrapper, {MapWrapperProps, Polygon} from "./maps/MapWrapper";
+import {useState, useEffect} from "react";
 
-export default function Home() {
+const Home = () => {
+  const [polygons, setPolygons] = useState<Polygon[]>([]);
+
+  useEffect(() => {
+    // Inline mock fetch logic
+    setTimeout(() => {
+      setPolygons([
+        [
+          [10.293, 123.88],
+          [10.2934, 123.8803],
+          [10.29374, 123.88083],
+          [10.29366, 123.88094],
+        ],
+        [
+          [10.294, 123.881],
+          [10.2944, 123.8813],
+          [10.29474, 123.88183],
+          [10.29466, 123.88194],
+        ],
+      ]);
+    }, 500); // Simulate network delay
+  }, []);
+
+  const mapProps: MapWrapperProps = {
+    center: [10.293, 123.88],
+    polygons,
+  };
+
   return (
     <main className="grid min-h-screen place-items-center">
-      <button
-        className="grid h-10 min-w-20 place-items-center rounded border border-neutral-50 px-3"
-        onClick={async () => {
-          const response = sampleSchema.safeParse({ hello: '123' });
-          console.log(response);
-
-          const response2 = await tryCatch(
-            new Promise((resolve) =>
-              resolve(sampleSchema.parse({ hello: '123' }))
-            )
-          );
-          console.log(response2);
-        }}
-        type="submit"
-      >
-        hello
-      </button>
+      <MapWrapper {...mapProps} />
     </main>
   );
-}
+};
+
+export default Home;

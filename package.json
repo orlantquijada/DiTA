@@ -1,15 +1,6 @@
 {
   "name": "dita",
   "module": "index.ts",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "web": "bun run --filter web-app dev"
-  },
-  "workspaces": [
-    "packages/*",
-    "web-app"
-  ],
   "devDependencies": {
     "@biomejs/biome": "2.1.2",
     "@types/bun": "latest",
@@ -18,7 +9,18 @@
   "peerDependencies": {
     "typescript": "^5"
   },
+  "private": true,
+  "scripts": {
+    "web": "bun run --filter web-app dev"
+  },
   "trustedDependencies": [
-    "@tailwindcss/oxide"
+    "@tailwindcss/oxide",
+    "esbuild",
+    "sharp"
+  ],
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "web-app"
   ]
 }

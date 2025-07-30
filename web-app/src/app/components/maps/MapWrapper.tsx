@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
 type LatLngTuple = [number, number];
 export type Polygon = LatLngTuple[];
@@ -8,7 +8,7 @@ export interface MapWrapperProps {
   polygons: Polygon[];
 }
 
-const MapWrapper = dynamic<MapWrapperProps>(() => import("./MapInner"), {
+const MapWrapper = dynamic<MapWrapperProps>(() => import('./MapInner'), {
   ssr: false,
 });
 

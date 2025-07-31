@@ -85,18 +85,20 @@ void sendData(bool isOnFire, int smokeValue) {
   NetworkClientSecure client;
   client.setInsecure();
   
+  String json = "{\r\n    \"latitude\": " + latitude + ",\r\n"
+                      + "    \"longitude\": " + longitude + ",\r\n"
+                      + "    \"deviceId\": \"" + DEVICE_ID + "\",\r\n"
+                      + "    \"smokeValue\": " + smokeValue + "\r\n"
+                      + "}";
   String readRequest = String("POST /api/fires HTTP/1.1\r\nHost: ")
                       + host
                       + "\r\nContent-Type: application/json"
                       + "\r\nAuthorization: Bearer "
-                      + "\r\nContent-Length: "
                       + apiKey
-                      + "\r\n\r\n{\r\n    \"latitude\": " + latitude + ",\r\n"
-                      + "    \"longitude\": " + longitude + ",\r\n"
-                      + "    \"deviceId\": \"" + DEVICE_ID + "\",\r\n"
-                      + "    \"smokeValue\": " + smokeValue + "\r\n"
-                      + "}\r\n"
-                      + "Connection: close\r\n\r\n";
+                      + "\r\nContent-Length: " + json.length()
+                      + "\r\n\r\n"
+                      + json
+                      + "\r\nConnection: close\r\n\r\n";
   Serial.println(readRequest);
   if (!client.connect(host, httpPort)) {
     Serial.printf("\nCan't connect to client\n\n");

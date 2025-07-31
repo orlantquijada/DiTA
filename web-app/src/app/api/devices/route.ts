@@ -1,7 +1,10 @@
-import { allDevices, createDevice, createDeviceSchema } from '@/lib/devices';
+import {
+  allDevicesWithDetails,
+  createDevice,
+  createDeviceSchema,
+  DEVICES_CACHE_KEY,
+} from '@/lib/devices';
 import { redis } from '@/lib/redis';
-
-const DEVICES_CACHE_KEY = 'devices';
 
 export async function POST(request: Request) {
   const data = await request.json();
@@ -14,8 +17,7 @@ export async function POST(request: Request) {
   const device = await createDevice(parseResponse.data);
 
   // invalidate cache
-  const devices = await allDevices();
-  await redis.set(DEVICES_CACHE_KEY, devices);
+  await redis.del(DEVICES_CACHE_KEY);
 
   return Response.json(device, { status: 200 });
 }
@@ -26,7 +28,7 @@ export async function GET() {
     return Response.json(cachedDevices, { status: 200 });
   }
 
-  const devices = await allDevices();
+  const devices = await allDevicesWithDetails();
   await redis.set(DEVICES_CACHE_KEY, devices);
 
   return Response.json(devices, { status: 200 });

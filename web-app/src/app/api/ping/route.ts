@@ -1,5 +1,3 @@
-import { NextResponse } from 'next/server';
-
 export function GET() {
-  return NextResponse.json({ message: 'pong' });
+  return Response.json({ message: 'pong' });
 }

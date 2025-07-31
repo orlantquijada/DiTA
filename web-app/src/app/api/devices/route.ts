@@ -3,7 +3,7 @@ import {
   createDevice,
   createDeviceSchema,
   DEVICES_CACHE_KEY,
-} from '@/lib/devices';
+} from '@/api/devices';
 import { redis } from '@/lib/redis';
 
 export async function POST(request: Request) {

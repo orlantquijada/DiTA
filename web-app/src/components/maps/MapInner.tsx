@@ -1,12 +1,16 @@
 'use client';
 import { MapContainer, Polygon, TileLayer } from 'react-leaflet';
+import { useMapStore } from '@/stores/map';
 import type { MapWrapperProps } from './MapWrapper';
 
 const MapInner = ({ center, polygons }: MapWrapperProps) => {
+  const setMap = useMapStore((s) => s.setMap);
+
   return (
     <MapContainer
       center={center}
-      className="h-dvh w-full"
+      className="h-full w-full"
+      ref={setMap}
       scrollWheelZoom={true}
       zoom={19}
     >

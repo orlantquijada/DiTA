@@ -9,6 +9,7 @@ LCDIC2 lcd(0x27, 20, 4);
 
 #define BUTTON_PIN 5
 #define LED_PIN 2
+#define DEVICE_ID "device001"
 
 const String latitude = "10.33028";
 const String longitude = "123.87722";
@@ -21,7 +22,7 @@ const char *password = "tinram053787";  // Change this to your WiFi password
 
 const char *host = "di-ta-web-app.vercel.app";        // Change to backend api
 const int httpPort = 443;                        // Change to backend port
-const String apiKey = "V6YOTILH9I7D51F9";  // Change this to backend API key
+const String apiKey = "tIBDRV12mxvwcQTUHx/GCvumG+oVHyNR7Gi3SNJLiLE=";  // Change this to backend API key
 
 bool hasFire = false;
 
@@ -84,10 +85,14 @@ void sendData(bool isOnFire, int smokeValue) {
   NetworkClientSecure client;
   client.setInsecure();
   
-  String readRequest = String("POST /api/fire HTTP/1.1\r\nHost: ") + host + "\r\nContent-Type: application/json\r\n\r\n"
-                      + "{\r\n    \"latitude\": \"" + latitude + "\",\r\n"
+  String readRequest = String("POST /api/fires HTTP/1.1\r\nHost: ")
+                      + host
+                      + "\r\nContent-Type: application/json\r\n"
+                      + "\r\nAuthorization: Bearer"
+                      + apiKey
+                      + "\r\n\r\n{\r\n    \"latitude\": \"" + latitude + "\",\r\n"
                       + "    \"longitude\": \"" + longitude + "\",\r\n"
-                      + "    \"isOnFire\": \"" + isOnFire + "\",\r\n"
+                      + "    \"deviceId\": \"" + DEVICE_ID + "\",\r\n"
                       + "    \"smokeValue\": " + smokeValue + "\r\n"
                       + "Connection: close\r\n\r\n";
 
@@ -133,12 +138,12 @@ void loop() {
       sendData(true, smoke);
       digitalWrite(LED_PIN, HIGH);
       lcd.print("On Fire!!!");
+      delay(10000);
     } else {
       digitalWrite(LED_PIN, LOW);
       lcd.print("All Clear");
+      delay(1000);
     }
 
-    pingClient();
-
-    delay(1000);
+    // pingClient();
 }

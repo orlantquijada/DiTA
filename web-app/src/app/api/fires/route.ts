@@ -1,6 +1,6 @@
-import { DEVICES_CACHE_KEY } from '@/lib/devices';
+import { DEVICES_CACHE_KEY } from '@/api/devices';
+import { allSignals, createSignal, createSignalSchema } from '@/api/signal';
 import { redis } from '@/lib/redis';
-import { allSignals, createSignal, createSignalSchema } from '@/lib/signal';
 
 const SIGNALS_CACHE_KEY = 'signals';
 

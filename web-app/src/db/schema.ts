@@ -1,6 +1,8 @@
 import { createId } from '@paralleldrive/cuid2';
 import { relations, sql } from 'drizzle-orm';
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { createSelectSchema } from 'drizzle-zod';
+import type z from 'zod';
 
 const timestamps = {
   createdAt: integer({ mode: 'timestamp' })
@@ -47,3 +49,9 @@ export const fireSignalRelations = relations(FireSignal, ({ one }) => ({
 export const deviceRelations = relations(Device, ({ many }) => ({
   signals: many(FireSignal),
 }));
+
+const deviceSelectSchema = createSelectSchema(Device);
+export type DeviceType = z.infer<typeof deviceSelectSchema>;
+
+const fireSignalSelectSchema = createSelectSchema(FireSignal);
+export type FireSignalType = z.infer<typeof fireSignalSelectSchema>;

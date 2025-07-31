@@ -5,7 +5,7 @@
 // #include "temperature.h"
 #include "mq2.h"
 
-LCDIC2 lcd(0x27, 20, 4);
+// LCDIC2 lcd(0x27, 20, 4);
 
 #define BUTTON_PIN 5
 #define LED_PIN 2
@@ -15,10 +15,10 @@ const String latitude = "10.33028";
 const String longitude = "123.87722";
 
 // WiFi library can't be separated
-// const char *ssid = "Tabi";          // Change this to your WiFi SSID
-// const char *password = "avreg$^DF456^";  // Change this to your WiFi password
-const char *ssid = "TinRam";          // Change this to your WiFi SSID
-const char *password = "tinram053787";  // Change this to your WiFi password
+const char *ssid = "Tabi";          // Change this to your WiFi SSID
+const char *password = "avreg$^DF456^";  // Change this to your WiFi password
+// const char *ssid = "TinRam";          // Change this to your WiFi SSID
+// const char *password = "tinram053787";  // Change this to your WiFi password
 
 const char *host = "di-ta-web-app.vercel.app";        // Change to backend api
 const int httpPort = 443;                        // Change to backend port
@@ -87,15 +87,17 @@ void sendData(bool isOnFire, int smokeValue) {
   
   String readRequest = String("POST /api/fires HTTP/1.1\r\nHost: ")
                       + host
-                      + "\r\nContent-Type: application/json\r\n"
-                      + "\r\nAuthorization: Bearer"
+                      + "\r\nContent-Type: application/json"
+                      + "\r\nAuthorization: Bearer "
+                      + "\r\nContent-Length: "
                       + apiKey
-                      + "\r\n\r\n{\r\n    \"latitude\": \"" + latitude + "\",\r\n"
-                      + "    \"longitude\": \"" + longitude + "\",\r\n"
+                      + "\r\n\r\n{\r\n    \"latitude\": " + latitude + ",\r\n"
+                      + "    \"longitude\": " + longitude + ",\r\n"
                       + "    \"deviceId\": \"" + DEVICE_ID + "\",\r\n"
                       + "    \"smokeValue\": " + smokeValue + "\r\n"
+                      + "}\r\n"
                       + "Connection: close\r\n\r\n";
-
+  Serial.println(readRequest);
   if (!client.connect(host, httpPort)) {
     Serial.printf("\nCan't connect to client\n\n");
     return;
@@ -110,8 +112,8 @@ void sendData(bool isOnFire, int smokeValue) {
 void setup() {
   Serial.begin(115200);
 
-  lcd.begin();
-  lcd.print("Setting up..");
+  // lcd.begin();
+  // lcd.print("Setting up..");
 
   pinMode(LED_PIN, OUTPUT);
 
@@ -121,27 +123,27 @@ void setup() {
 }
 
 void loop() {
-    lcd.clear();
+    // lcd.clear();
     // float temp = readTemperature();
     int smoke = readSmokeSensor();
     int cleanAve = getAverage();
 
-    lcd.setCursor(0, 0);
-    lcd.print("Longitude:" + longitude);
-    lcd.setCursor(0, 1);
-    lcd.print("Latitude:" + latitude);
-    lcd.setCursor(0, 2);
-    lcd.print("Smoke:" + String(smoke));
+    // lcd.setCursor(0, 0);
+    // lcd.print("Longitude:" + longitude);
+    // lcd.setCursor(0, 1);
+    // lcd.print("Latitude:" + latitude);
+    // lcd.setCursor(0, 2);
+    // lcd.print("Smoke:" + String(smoke));
 
-    lcd.setCursor(0, 3);
+    // lcd.setCursor(0, 3);
     if (cleanAve < smoke) {
       sendData(true, smoke);
       digitalWrite(LED_PIN, HIGH);
-      lcd.print("On Fire!!!");
+      // lcd.print("On Fire!!!");
       delay(10000);
     } else {
       digitalWrite(LED_PIN, LOW);
-      lcd.print("All Clear");
+      // lcd.print("All Clear");
       delay(1000);
     }
 

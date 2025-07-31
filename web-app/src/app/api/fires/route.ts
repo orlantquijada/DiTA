@@ -1,3 +1,4 @@
+import { DEVICES_CACHE_KEY } from '@/lib/devices';
 import { redis } from '@/lib/redis';
 import { allSignals, createSignal, createSignalSchema } from '@/lib/signal';
 
@@ -14,8 +15,7 @@ export async function POST(request: Request) {
   const signal = await createSignal(parseResponse.data);
 
   // invalidate cache
-  const signals = await allSignals();
-  await redis.set(SIGNALS_CACHE_KEY, signals);
+  await redis.del(SIGNALS_CACHE_KEY, DEVICES_CACHE_KEY);
 
   return Response.json(signal, { status: 200 });
 }

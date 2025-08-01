@@ -17,3 +17,8 @@ export function getSmokeStatus(signal: FireSignalType): SmokeStatus {
 
   return 'normal';
 }
+
+export type Signal = Pick<
+  FireSignalType,
+  'longitude' | 'latitude' | 'smokeValue'
+>;

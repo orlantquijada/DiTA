@@ -4,7 +4,7 @@ import {
   createDeviceSchema,
   DEVICES_CACHE_KEY,
 } from '@/api/devices';
-import { redis } from '@/lib/redis';
+import { getSet, redis } from '@/lib/redis';
 
 export async function POST(request: Request) {
   const data = await request.json();
@@ -23,13 +23,7 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const cachedDevices = await redis.get(DEVICES_CACHE_KEY);
-  if (cachedDevices) {
-    return Response.json(cachedDevices, { status: 200 });
-  }
-
-  const devices = await allDevicesWithDetails();
-  await redis.set(DEVICES_CACHE_KEY, devices);
+  const devices = await getSet(DEVICES_CACHE_KEY, allDevicesWithDetails);
 
   return Response.json(devices, { status: 200 });
 }

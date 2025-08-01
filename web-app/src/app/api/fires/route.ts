@@ -1,6 +1,6 @@
 import { DEVICES_CACHE_KEY } from '@/api/devices';
 import { allSignals, createSignal, createSignalSchema } from '@/api/signal';
-import { redis } from '@/lib/redis';
+import { getSet, redis } from '@/lib/redis';
 
 const SIGNALS_CACHE_KEY = 'signals';
 
@@ -21,13 +21,7 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const cachedSignals = await redis.get(SIGNALS_CACHE_KEY);
-  if (cachedSignals) {
-    return Response.json(cachedSignals, { status: 200 });
-  }
-
-  const signals = await allSignals();
-  await redis.set(SIGNALS_CACHE_KEY, signals);
+  const signals = await getSet(SIGNALS_CACHE_KEY, allSignals);
 
   return Response.json(signals, { status: 200 });
 }

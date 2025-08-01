@@ -5,9 +5,9 @@ import { Badge } from './ui/badge';
 export default function SmokeStatusBadge({
   signal,
 }: {
-  signal: FireSignalType;
+  signal?: FireSignalType;
 }) {
-  const smokeStatus = getSmokeStatus(signal);
+  const smokeStatus = signal ? getSmokeStatus(signal) : 'normal';
   const label =
     smokeStatus === 'normal'
       ? 'Normal'

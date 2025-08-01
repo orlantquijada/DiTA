@@ -26,7 +26,7 @@ export default function DeviceCard({ device, onPressAction }: Props) {
         </CardDescription>
         <CardAction>
           <Button
-            className="size-8"
+            className="size-8 cursor-pointer"
             onClick={onPressAction}
             size="icon"
             variant="secondary"
@@ -36,7 +36,7 @@ export default function DeviceCard({ device, onPressAction }: Props) {
         </CardAction>
       </CardHeader>
       <CardContent>
-        {!!device.signal && <SmokeStatusBadge signal={device.signal} />}
+        <SmokeStatusBadge signal={device.signal} />
       </CardContent>
     </Card>
   );

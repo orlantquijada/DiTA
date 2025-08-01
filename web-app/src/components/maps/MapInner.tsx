@@ -1,11 +1,11 @@
 'use client';
-import { MapContainer, Polygon, TileLayer } from 'react-leaflet';
+import { MapContainer, Circle, TileLayer } from 'react-leaflet';
 import { useMapStore } from '@/stores/map';
 import type { MapWrapperProps } from './MapWrapper';
 
 const MapInner = ({ center, polygons }: MapWrapperProps) => {
   const setMap = useMapStore((s) => s.setMap);
-
+  const circleCenter = useMapStore((s) => s.circleCenter);
   return (
     <MapContainer
       center={center}
@@ -19,7 +19,7 @@ const MapInner = ({ center, polygons }: MapWrapperProps) => {
         maxZoom={25}
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Polygon pathOptions={{ color: 'red' }} positions={polygons} />
+      <Circle center={circleCenter || center} radius={20} color="red" />
     </MapContainer>
   );
 };

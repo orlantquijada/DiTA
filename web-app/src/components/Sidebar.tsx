@@ -7,7 +7,7 @@ export default function Sidebar() {
         🔥 Team DiTA 🔥
       </h1>
 
-      <div className="flex flex-1 flex-col gap-3 overflow-auto pt-6">
+      <div className="flex flex-1 flex-col gap-3 overflow-auto pt-6 pr-3">
         <span className="font-semibold text-lg text-secondary-foreground">
           Devices
         </span>

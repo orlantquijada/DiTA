@@ -12,6 +12,7 @@ type Props = {
 
 export default function DevicesList({ devices, className }: Props) {
   const map = useMapStore((s) => s.map);
+  const setCircleCenter = useMapStore((s) => s.setCircleCenter);
 
   return (
     <div className={cn('flex flex-col gap-4', className)}>
@@ -23,7 +24,7 @@ export default function DevicesList({ devices, className }: Props) {
             if (!map) {
               return;
             }
-
+            setCircleCenter([device.latitude, device.longitude]);
             map.setView({ lng: device.longitude, lat: device.latitude });
           }}
         />

@@ -7,7 +7,7 @@ const SmokeStatusMap: Record<SmokeStatus, number> = {
   danger: 500,
 };
 
-export function getSmokeStatus(signal: FireSignalType): SmokeStatus {
+export function getSmokeStatus(signal: { smokeValue: number }): SmokeStatus {
   if (signal.smokeValue >= SmokeStatusMap.danger) {
     return 'danger';
   }
